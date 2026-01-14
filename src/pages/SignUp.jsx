@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
 import apiInterceptor from "../api/apiInterceptor";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth } from "../../firebase";
 
 function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
@@ -27,6 +29,30 @@ function SignUp() {
       console.error("Signup failed:", error);
     }
   };
+
+  const handleGoogleAuth = async () => {
+    try {
+      if (!mobile) {
+        return alert("Please enter your mobile number before proceeding with Google sign-in.");
+      }
+      const provider = new GoogleAuthProvider();
+      const response = await signInWithPopup(auth, provider);
+
+      const { data } = await apiInterceptor.post("/auth/google-auth", {
+        fullName: response.user.displayName,
+        email: response.user.email,
+        mobile,
+        role,
+      }, { withCredentials: true });
+
+      if (data.status === "fail") {
+        return alert(data.message);
+      }
+      console.log("Google authentication successful:", data);
+    } catch (error) {
+      console.error("Google authentication failed:", error);
+    }
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0f0c29] via-[#302b63] to-[#24243e] px-4">
@@ -147,6 +173,7 @@ function SignUp() {
         {/* Google Signup */}
         <button
           type="button"
+          onClick={handleGoogleAuth}
           className="w-full mt-6 flex items-center justify-center gap-3 py-3 rounded-lg bg-white text-black font-medium shadow-md hover:scale-[1.02] transition"
         >
           <FcGoogle size={22} />
