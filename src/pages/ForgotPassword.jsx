@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { ClipLoader } from "react-spinners";
 import { IoIosArrowBack } from "react-icons/io";
 import apiInterceptor from "../api/apiInterceptor";
 import { useNavigate } from "react-router-dom";
@@ -11,56 +12,84 @@ function ForgotPassword() {
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handelSendOtp = async () => {
+    setLoading(true);
     try {
       const data = { email };
       const response = await apiInterceptor.post("/auth/send-otp", data, {
         withCredentials: true,
       });
-      if (response.data.status === "fail") {
-        alert(response.data.message);
+      if (response?.data?.status === "fail") {
+        setError(response?.data?.message);
         return;
       }
       setStep(2);
+      setError("");
     } catch (error) {
       console.error("Error sending OTP:", error);
+      setError(
+        error?.response?.data?.message || "An error occurred while sending OTP."
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
   const handelVerifyOtp = async () => {
+    setLoading(true);
     try {
       const data = { email, otp };
       const response = await apiInterceptor.post("/auth/verify-otp", data, {
         withCredentials: true,
       });
-      if (response.data.status === "fail") {
-        alert(response.data.message);
+      if (response?.data?.status === "fail") {
+        setError(response?.data?.message);
         return;
       }
       setStep(3);
+      setError("");
+      setOtp("");
     } catch (error) {
       console.error("Error verifying OTP:", error);
+      setError(
+        error?.response?.data?.message ||
+          "An error occurred while verifying OTP."
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
   const handelResetPassword = async () => {
     if (newPassword !== confirmPassword) {
-      alert("Passwords do not match");
+      setError("Passwords do not match");
       return;
     }
+    setLoading(true);
     try {
       const data = { newPassword };
       const response = await apiInterceptor.post("/auth/reset-password", data, {
         withCredentials: true,
       });
-      if (response.data.status === "fail") {
-        alert(response.data.message);
+      if (response?.data?.status === "fail") {
+        setError(response?.data?.data?.message);
         return;
       }
+      setError("");
+      setNewPassword("");
+      setConfirmPassword("");
       navigate("/signin");
     } catch (error) {
       console.error("Error resetting password:", error);
+      setError(
+        error?.response?.data?.message ||
+          "An error occurred while resetting password."
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -72,7 +101,14 @@ function ForgotPassword() {
         <div className="flex items-center justify-between mb-6">
           {/* Back Button */}
           <button
-            onClick={() => window.history.back()}
+            onClick={() => {
+              if (step > 1) {
+                setStep(step - 1);
+                setError("");
+              } else {
+                navigate("/signin");
+              }
+            }}
             className="p-2 rounded-full hover:bg-white/10 transition"
           >
             <IoIosArrowBack className="text-white text-2xl" />
@@ -107,9 +143,20 @@ function ForgotPassword() {
             <button
               onClick={handelSendOtp}
               className="w-full py-3 rounded-lg bg-gradient-to-r from-orange-500 to-pink-500 text-white font-semibold shadow-lg"
+              disabled={loading}
             >
-              Send OTP
+              {loading ? (
+                <div className="flex items-center justify-center gap-2">
+                  <ClipLoader size={18} color="#fff" />
+                  <span className="text-sm">Sending OTP..</span>
+                </div>
+              ) : (
+                "Send OTP"
+              )}
             </button>
+            {error && (
+              <p className="text-red-500 text-sm text-center mt-2">*{error}</p>
+            )}
           </>
         )}
 
@@ -127,9 +174,20 @@ function ForgotPassword() {
             <button
               onClick={handelVerifyOtp}
               className="w-full py-3 rounded-lg bg-gradient-to-r from-orange-500 to-pink-500 text-white font-semibold shadow-lg"
+              disabled={loading}
             >
-              Verify OTP
+              {loading ? (
+                <div className="flex items-center justify-center gap-2">
+                  <ClipLoader size={18} color="#fff" />
+                  <span className="text-sm">Verifying OTP..</span>
+                </div>
+              ) : (
+                "Verify OTP"
+              )}
             </button>
+            {error && (
+              <p className="text-red-500 text-sm text-center mt-2">*{error}</p>
+            )}
           </>
         )}
 
@@ -155,9 +213,20 @@ function ForgotPassword() {
             <button
               onClick={handelResetPassword}
               className="w-full py-3 rounded-lg bg-gradient-to-r from-orange-500 to-pink-500 text-white font-semibold shadow-lg"
+              disabled={loading}
             >
-              Reset Password
+              {loading ? (
+                <div className="flex items-center justify-center gap-2">
+                  <ClipLoader size={18} color="#fff" />
+                  <span className="text-sm">Password Resetting...</span>
+                </div>
+              ) : (
+                "Reset Password"
+              )}
             </button>
+            {error && (
+              <p className="text-red-500 text-sm text-center mt-2">*{error}</p>
+            )}
           </>
         )}
       </div>

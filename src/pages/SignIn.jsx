@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { ClipLoader } from "react-spinners";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
 import apiInterceptor from "../api/apiInterceptor";
@@ -10,40 +11,61 @@ function SignIn() {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSignin = async () => {
+    setLoading(true);
     try {
       const data = {
         email,
         password,
       };
       const response = await apiInterceptor.post("/auth/signin", data);
-      console.log("Signin successful:", response.data);
+      if (response?.data?.status === "fail") {
+        setError(response?.data?.message);
+        return;
+      }
+      // console.log("Signin successful:", response.data);
+      setError("");
     } catch (error) {
       console.error("Signin failed:", error);
+      setError(
+        error?.response?.data?.message || "An error occurred during signin."
+      );
     } finally {
       setEmail("");
       setPassword("");
+      setLoading(false);
     }
   };
 
   const handleGoogleAuth = async () => {
-      try {
-        const provider = new GoogleAuthProvider();
-        const response = await signInWithPopup(auth, provider);
-  
-        const { data } = await apiInterceptor.post("/auth/google-auth", {
+    try {
+      const provider = new GoogleAuthProvider();
+      const response = await signInWithPopup(auth, provider);
+
+      const { data } = await apiInterceptor.post(
+        "/auth/google-auth",
+        {
           email: response.user.email,
-        }, { withCredentials: true });
-  
-        if (data.status === "fail") {
-          return alert(data.message);
-        }
-        console.log("Google login authentication successful:", data);
-      } catch (error) {
-        console.error("Google authentication failed:", error);
+        },
+        { withCredentials: true }
+      );
+
+      if (data.status === "fail") {
+        return setError(data.message);
       }
+      // console.log("Google login authentication successful:", data);
+      setError("");
+    } catch (error) {
+      console.error("Google authentication failed:", error);
+      setError(
+        error.response?.data?.message ||
+          "An error occurred during Google signin."
+      );
     }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0f0c29] via-[#302b63] to-[#24243e] px-4">
@@ -112,9 +134,20 @@ function SignIn() {
             type="button"
             onClick={handleSignin}
             className="w-full py-3 mt-2 rounded-lg bg-gradient-to-r from-orange-500 to-pink-500 text-white font-semibold tracking-wide shadow-lg hover:scale-[1.02] transition"
+            disabled={loading}
           >
-            Login Account
+            {loading ? (
+              <div className="flex items-center justify-center gap-2">
+                <ClipLoader size={18} color="#fff" />
+                <span className="text-sm">Logging to your accout</span>
+              </div>
+            ) : (
+              "Login Account"
+            )}
           </button>
+          {error && (
+            <p className="text-red-500 text-sm text-center mt-2">*{error}</p>
+          )}
         </form>
 
         <div className="flex items-center gap-3 text-gray-400">
@@ -128,6 +161,7 @@ function SignIn() {
           type="button"
           onClick={handleGoogleAuth}
           className="w-full mt-6 flex items-center justify-center gap-3 py-3 rounded-lg bg-white text-black font-medium shadow-md hover:scale-[1.02] transition"
+          disabled={loading}
         >
           <FcGoogle size={22} />
           Sign up with Google

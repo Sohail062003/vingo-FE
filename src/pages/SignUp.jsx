@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { ClipLoader } from "react-spinners";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
 import apiInterceptor from "../api/apiInterceptor";
@@ -13,8 +14,11 @@ function SignUp() {
   const [password, setPassword] = useState("");
   const [mobile, setMobile] = useState("");
   const [role, setRole] = useState("user");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSignup = async () => {
+    setLoading(true);
     try {
       const data = {
         fullName,
@@ -24,37 +28,61 @@ function SignUp() {
         role,
       };
       const response = await apiInterceptor.post("/auth/signup", data);
-      console.log("Signup successful:", response.data);
+      if (response?.data?.status === "fail") {
+        setError(response?.data?.message);
+        return;
+      }
+      setError("");
+      // console.log("Signup successful:", response.data);
     } catch (error) {
       console.error("Signup failed:", error);
+      setError(
+        error?.response?.data?.message || "An error occurred during signup."
+      );
+    } finally {
+      setLoading(false);
+      setFullName("");
+      setEmail("");
+      setPassword("");
+      setMobile("");
     }
   };
 
   const handleGoogleAuth = async () => {
     try {
       if (!mobile) {
-        return alert("Please enter your mobile number before proceeding with Google sign-in.");
+        return setError(
+          "Please enter your mobile number before proceeding with Google authentication."
+        );
       }
       const provider = new GoogleAuthProvider();
       const response = await signInWithPopup(auth, provider);
 
-      const { data } = await apiInterceptor.post("/auth/google-auth", {
-        fullName: response.user.displayName,
-        email: response.user.email,
-        mobile,
-        role,
-      }, { withCredentials: true });
+      const { data } = await apiInterceptor.post(
+        "/auth/google-auth",
+        {
+          fullName: response.user.displayName,
+          email: response.user.email,
+          mobile,
+          role,
+        },
+        { withCredentials: true }
+      );
 
       if (data.status === "fail") {
-        return alert(data.message);
+        return setError(data.message);
       }
+      setError("");
       console.log("Google authentication successful:", data);
     } catch (error) {
+      setError(
+        error?.response?.data?.message ||
+          "An error occurred during Google signin."
+      );
       console.error("Google authentication failed:", error);
     }
-  }
+  };
 
-  // JSX
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0f0c29] via-[#302b63] to-[#24243e] px-4">
       {/* Glass Card */}
@@ -83,6 +111,7 @@ function SignUp() {
               className="w-full mt-1 p-3 rounded-lg bg-black/30 text-white border border-white/20 focus:outline-none focus:ring-2 focus:ring-orange-400"
             />
           </div>
+
           {/* Email Input */}
           <div>
             <label className="text-sm text-gray-300">Email</label>
@@ -160,9 +189,20 @@ function SignUp() {
             type="button"
             onClick={handleSignup}
             className="w-full py-3 mt-2 rounded-lg bg-gradient-to-r from-orange-500 to-pink-500 text-white font-semibold tracking-wide shadow-lg hover:scale-[1.02] transition"
+            disabled={loading}
           >
-            Create Account
+            {loading ? (
+              <div className="flex items-center justify-center gap-2">
+                <ClipLoader size={18} color="#fff" />
+                <span className="text-sm">Creating account...</span>
+              </div>
+            ) : (
+              "Sign Up"
+            )}
           </button>
+          {error && (
+            <p className="text-red-500 text-sm text-center mt-2">*{error}</p>
+          )}
         </form>
 
         <div className="flex items-center gap-3 text-gray-400">
@@ -176,6 +216,7 @@ function SignUp() {
           type="button"
           onClick={handleGoogleAuth}
           className="w-full mt-6 flex items-center justify-center gap-3 py-3 rounded-lg bg-white text-black font-medium shadow-md hover:scale-[1.02] transition"
+          disabled={loading}
         >
           <FcGoogle size={22} />
           Sign in with Google
