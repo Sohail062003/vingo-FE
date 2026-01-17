@@ -6,6 +6,8 @@ import { FcGoogle } from "react-icons/fc";
 import apiInterceptor from "../api/apiInterceptor";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "../../firebase";
+import { useDispatch } from "react-redux";
+import { setUserData } from "../redux/userSlice";
 
 function SignIn() {
   const [showPassword, setShowPassword] = useState(false);
@@ -14,6 +16,9 @@ function SignIn() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+ const dispatch = useDispatch();
+
+  // handle Login
   const handleSignin = async () => {
     setLoading(true);
     try {
@@ -22,20 +27,21 @@ function SignIn() {
         password,
       };
       const response = await apiInterceptor.post("/auth/signin", data);
-      if (response?.data?.status === "fail") {
-        setError(response?.data?.message);
-        return;
-      }
-      // console.log("Signin successful:", response.data);
+      // if (response?.data?.status === "fail") {
+      //   setError(response?.data?.message);
+      //   return;
+      // }
+      dispatch(setUserData(response.data));
+
       setError("");
+      setEmail("");
+      setPassword("");
     } catch (error) {
       console.error("Signin failed:", error);
       setError(
         error?.response?.data?.message || "An error occurred during signin."
       );
     } finally {
-      setEmail("");
-      setPassword("");
       setLoading(false);
     }
   };
@@ -56,7 +62,7 @@ function SignIn() {
       if (data.status === "fail") {
         return setError(data.message);
       }
-      // console.log("Google login authentication successful:", data);
+      dispatch(setUserData(data));
       setError("");
     } catch (error) {
       console.error("Google authentication failed:", error);

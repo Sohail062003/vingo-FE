@@ -6,6 +6,8 @@ import { FcGoogle } from "react-icons/fc";
 import apiInterceptor from "../api/apiInterceptor";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "../../firebase";
+import { useDispatch } from "react-redux";
+import { setUserData } from "../redux/userSlice";
 
 function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
@@ -16,7 +18,9 @@ function SignUp() {
   const [role, setRole] = useState("user");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
 
+  // handle Register 
   const handleSignup = async () => {
     setLoading(true);
     try {
@@ -32,8 +36,14 @@ function SignUp() {
         setError(response?.data?.message);
         return;
       }
+
+      dispatch(setUserData(response.data)); 
+
       setError("");
-      // console.log("Signup successful:", response.data);
+      setFullName("");
+      setEmail("");
+      setPassword("");
+      setMobile("");
     } catch (error) {
       console.error("Signup failed:", error);
       setError(
@@ -41,13 +51,10 @@ function SignUp() {
       );
     } finally {
       setLoading(false);
-      setFullName("");
-      setEmail("");
-      setPassword("");
-      setMobile("");
     }
   };
 
+  // handle Google Register
   const handleGoogleAuth = async () => {
     try {
       if (!mobile) {
@@ -72,8 +79,11 @@ function SignUp() {
       if (data.status === "fail") {
         return setError(data.message);
       }
+
+      dispatch(setUserData(data));
+
       setError("");
-      console.log("Google authentication successful:", data);
+
     } catch (error) {
       setError(
         error?.response?.data?.message ||
