@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
@@ -15,6 +15,8 @@ function SignIn() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
 
  const dispatch = useDispatch();
 
@@ -32,6 +34,7 @@ function SignIn() {
       //   return;
       // }
       dispatch(setUserData(response.data));
+      navigate("/");
 
       setError("");
       setEmail("");

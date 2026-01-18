@@ -4,7 +4,7 @@ function OpenLayout() {
   return (
     <>
         <Outlet />
-    </>
+    </> 
   )
 }
 

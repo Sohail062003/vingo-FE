@@ -11,17 +11,15 @@ function useGetCurrentUser() {
     const fetchUser = async () => {
         try {
             const result = await apiInterceptor.get("/user/current-user",{withCredentials: true});
-            if (!result) {
-                alert("Unable to get the user");
-            }
             dispatch(setUserData(result.data));
         } catch (error) {
-         console.error("unable to fetch  getCurrent user",error)   
+          console.error("unable to fetch  getCurrent user",error)
+          dispatch(setUserData(null));   
         }
     }
 
     fetchUser();
-  },)
+  }, [dispatch])
 }
 
 export default useGetCurrentUser
