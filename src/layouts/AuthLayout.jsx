@@ -1,9 +1,9 @@
 import { Navigate, Outlet } from 'react-router-dom'
 import { useSelector } from 'react-redux';
-import useGetCurrentUser from '../hooks/useGetCurrentUser'
+// import useGetCurrentUser from '../hooks/useGetCurrentUser'
 
 function AuthLayout() {
-  useGetCurrentUser();
+  // useGetCurrentUser();
   const {userData, loading } = useSelector(state=>state.user);
   
   // ⏳ While checking auth
