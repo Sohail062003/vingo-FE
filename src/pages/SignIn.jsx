@@ -29,10 +29,7 @@ function SignIn() {
         password,
       };
       const response = await apiInterceptor.post("/auth/signin", data);
-      // if (response?.data?.status === "fail") {
-      //   setError(response?.data?.message);
-      //   return;
-      // }
+      
       dispatch(setUserData(response.data));
       navigate("/");
 
