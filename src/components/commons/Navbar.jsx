@@ -8,6 +8,8 @@ import {
   FaClipboardList,
   FaBars,
   FaTimes,
+  FaPlusCircle,
+  FaClock,
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,7 +18,10 @@ import apiInterceptor from "../../api/apiInterceptor";
 
 function Navbar() {
   const { userData, city } = useSelector((state) => state.user);
+  const { myShopData }= useSelector((state) => state.owner);
   const dispatch = useDispatch();
+
+  const role = userData?.data?.user?.role;
 
   // const [city, setCity] = useState("Mumbai");
   const [openProfile, setOpenProfile] = useState(false);
@@ -24,16 +29,15 @@ function Navbar() {
 
   const handleLogout = async () => {
     try {
-      await apiInterceptor.post('/auth/signout', {withCredentials: true});
+      await apiInterceptor.post("/auth/signout", { withCredentials: true });
 
       dispatch(setUserData(null));
-
     } catch (error) {
-      console.error("logout Error: - ", error)
+      console.error("logout Error: - ", error);
       dispatch(setUserData(null));
     } finally {
-    setOpenProfile(false);
-    setOpenMobileMenu(false);
+      setOpenProfile(false);
+      setOpenMobileMenu(false);
     }
   };
 
@@ -49,32 +53,34 @@ function Navbar() {
             </Link>
 
             {/* 🔍 Search + Location (DESKTOP ONLY) */}
-            <div className="hidden md:flex flex-1 gap-4 justify-center px-4">
-              <div className="hidden lg:flex items-center gap-1 text-gray-300">
-                <FaMapMarkerAlt className="text-orange-400" />
-                <span>{city}</span>
-              </div>
+            {role == "user" && (
+              <div className="hidden md:flex flex-1 gap-4 justify-center px-4">
+                <div className="hidden lg:flex items-center gap-1 text-gray-300">
+                  <FaMapMarkerAlt className="text-orange-400" />
+                  <span>{city}</span>
+                </div>
 
-              <div className="relative w-full max-w-lg">
-                <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search restaurants, dishes..."
-                  className="
+                <div className="relative w-full max-w-lg">
+                  <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Search restaurants, dishes..."
+                    className="
                     w-full pl-11 pr-4 py-2.5 rounded-2xl
                     bg-black/30 text-white
                     border border-white/20
                     focus:ring-2 focus:ring-orange-400
                     outline-none
                   "
-                />
+                  />
+                </div>
               </div>
-            </div>
+            )}
 
             {/* 🧩 Right Section (Desktop) */}
             <div className="hidden md:flex items-center gap-5 text-white">
               {/* My Orders (WEB ONLY) */}
-              {userData && (
+              {userData && role == "user" && (
                 <Link
                   to="/orders"
                   className="hidden lg:flex items-center gap-2 text-sm text-gray-300 hover:text-orange-400"
@@ -85,7 +91,7 @@ function Navbar() {
               )}
 
               {/* Cart */}
-              {userData && (
+              {userData && role == "user" && (
                 <Link
                   to="/cart"
                   className="relative p-2 rounded-full hover:bg-white/10 hover:text-orange-400"
@@ -95,6 +101,54 @@ function Navbar() {
                     0
                   </span>
                 </Link>
+              )}
+
+              {/* OWNER ACTIONS (DESKTOP) */}
+              {userData && role === "owner" && (
+                <>
+                {myShopData && 
+                  <Link
+                    to="/owner/add-food"
+                    className="
+                      hidden lg:flex items-center gap-2
+                      px-4 py-2 rounded-xl
+                      bg-gradient-to-r from-orange-500 to-pink-500
+                      text-white text-sm font-medium
+                      hover:opacity-90 transition
+                    "
+                  >
+                    <FaPlusCircle />
+                    Add Food
+                  </Link> }
+
+                  <Link
+                    to="/owner/orders"
+                    className="
+                      hidden relative lg:flex items-center gap-2
+                      text-sm text-gray-300
+                      px-4 py-2 rounded-xl
+                      border-orange-400 border 
+                      hover:text-orange-400 transition hover:border-orange-300
+                    "
+                  >
+                    <FaClock />
+                    Pending Orders
+                    <span
+                      className="
+                      absolute -top-2.5 -right-2
+                      min-w-[18px] h-[18px]
+                      px-1
+                      flex items-center justify-center
+                      rounded-full
+                      bg-gradient-to-r from-orange-500 to-pink-500
+                      text-[10px] font-bold text-center
+                      text-white
+                    "
+                    >
+                      0
+                    </span>
+                  </Link>
+                </>
               )}
 
               {/* Profile */}
@@ -117,19 +171,19 @@ function Navbar() {
                 <div className="relative">
                   <div
                     onClick={() => setOpenProfile(!openProfile)}
-                    className="flex items-center gap-2 cursor-pointer p-2 rounded-full bg-white/10 hover:bg-white/20"
+                    className="flex items-center gap-2 cursor-pointer p-2  rounded-full bg-white/10 hover:bg-white/20"
                   >
-                    <FaUserCircle size={24} />
+                    <FaUserCircle size={24} color="" />
                     <span className="hidden sm:block text-sm">
                       {userData?.data?.user?.fullName}
                     </span>
                   </div>
 
                   {openProfile && (
-                    <div className="absolute right-0 mt-3 w-44 bg-black/80 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl">
+                    <div className="absolute  right-0 mt-3 w-44 bg-black/80 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl">
                       <Link
                         to="/orders"
-                        className="flex items-center gap-2 px-4 py-3 text-sm text-white hover:bg-white/10"
+                        className="flex md:hidden items-center gap-2 px-4 py-3 text-sm text-white hover:bg-white/10"
                       >
                         <FaClipboardList />
                         My Orders
@@ -159,7 +213,6 @@ function Navbar() {
       </div>
 
       {/* 📱 Mobile Menu */}
-
       <div
         className={`
           md:hidden fixed inset-0 z-40
@@ -186,41 +239,52 @@ function Navbar() {
             <>
               <div className="flex items-center gap-3">
                 <div className="w-11 h-11 rounded-full bg-gradient-to-r from-orange-500 to-pink-500 flex items-center justify-center text-2xl text-white font-semibold">
-                 <samp>{userData?.data?.user?.fullName?.charAt(0)}</samp> 
+                  <samp className="">
+                    {userData?.data?.user?.fullName?.charAt(0)}
+                  </samp>
                 </div>
 
-                <div className="leading-tight">
+                <div className="leading-tight flex flex-col">
                   <p className="text-white font-semibold text-sm">
                     {userData?.data?.user?.fullName}
                   </p>
-                  <p className="text-gray-400 text-xs">View profile</p>
+                  <p className="text-gray-400 text-xs mb-1">
+                    {role === "owner" ? "Shop owner" : "view profile"}
+                  </p>
+                  <div className="flex lg:flex items-center gap-1 text-gray-300">
+                    <FaMapMarkerAlt size={9} className="text-orange-400" />
+                    <span className="text-xs">{city}</span>
+                  </div>
                 </div>
               </div>
 
               <div className="h-px bg-white/10 my-3" />
 
-              {/* 🔍 SEARCH BAR (ADD HERE 👈) */}
-              <div className="relative">
-                <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search food or restaurants..."
-                  className="
+              {/* user role SEARCH BAR (ADD HERE 👈) */}
+              {role === "user" && (
+                <>
+                  <div className="relative">
+                    <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                    <input
+                      type="text"
+                      placeholder="Search food or restaurants..."
+                      className="
                     w-full pl-11 pr-4 py-3 rounded-2xl
                     bg-black/40 text-white
                     border border-white/20
                     focus:ring-2 focus:ring-orange-400
                     outline-none transition
                   "
-                />
-              </div>
-
-              <div className="h-px bg-white/10 my-3" />
+                    />
+                  </div>
+                  <div className="h-px bg-white/10 my-3" />
+                </>
+              )}
             </>
           )}
 
-          {/* 📦 My Orders */}
-          {userData && (
+          {/* user role My Orders */}
+          {userData && role == "user" && (
             <Link
               to="/orders"
               onClick={() => setOpenMobileMenu(false)}
@@ -231,8 +295,8 @@ function Navbar() {
             </Link>
           )}
 
-          {/* 🛒 Cart */}
-          {userData && (
+          {/* user role Cart */}
+          {userData && role == "user" && (
             <Link
               to="/cart"
               onClick={() => setOpenMobileMenu(false)}
@@ -246,6 +310,59 @@ function Navbar() {
             </Link>
           )}
 
+          {/* mobile owner role  */}
+          {userData && role === "owner" && (
+            <>
+              <Link
+                to="/owner/add-food"
+                onClick={() => setOpenMobileMenu(false)}
+                className="
+                  flex items-center  gap-3
+                  w-full px-4 py-3
+                  rounded-xl
+                  bg-gradient-to-r from-orange-500 to-pink-500
+                  text-white font-semibold text-sm
+                  shadow-lg
+                  hover:opacity-90 transition
+                "
+              >
+                <FaPlusCircle size={18} />
+                Add Food Item
+              </Link>
+
+              {/* ⏳ Pending Orders */}
+              <Link
+                to="/owner/orders"
+                onClick={() => setOpenMobileMenu(false)}
+                className="
+                  relative flex items-center gap-3
+                  w-full px-4 py-3
+                  rounded-xl
+                  bg-white/5
+                  text-white/90 text-sm
+                  hover:bg-white/10 hover:text-orange-400
+                  transition
+                "
+              >
+                <FaClock size={16} />
+                Pending Orders
+                <span
+                  className="
+                  absolute top-2 right-3
+                  min-w-[20px] h-5
+                  px-1
+                  flex items-center justify-center
+                  rounded-full
+                  bg-gradient-to-r from-orange-500 to-pink-500
+                  text-white text-xs font-bold
+                "
+                >
+                  0
+                </span>
+              </Link>
+            </>
+          )}
+
           {userData && <div className="h-px bg-white/10 my-2" />}
 
           {/* 🚪 Logout */}
@@ -257,31 +374,6 @@ function Navbar() {
               <FaSignOutAlt />
               Logout
             </button>
-          )}
-
-          {/* 🔐 Auth (If not logged in) */}
-          {!userData && (
-            <>
-              <Link
-                to="/signin"
-                onClick={() => setOpenMobileMenu(false)}
-                className="block text-white/90 hover:text-orange-400 transition"
-              >
-                Sign In
-              </Link>
-
-              <Link
-                to="/signup"
-                onClick={() => setOpenMobileMenu(false)}
-                className="
-            block text-center px-4 py-2 rounded-xl
-            bg-gradient-to-r from-orange-500 to-pink-500
-            text-white font-medium
-          "
-              >
-                Sign Up
-              </Link>
-            </>
           )}
         </div>
       </div>

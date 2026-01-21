@@ -1,5 +1,6 @@
 import { Navigate, Outlet } from 'react-router-dom'
 import { useSelector } from 'react-redux';
+import { ClipLoader } from 'react-spinners';
 // import useGetCurrentUser from '../hooks/useGetCurrentUser'
 
 function AuthLayout() {
@@ -9,7 +10,7 @@ function AuthLayout() {
   // ⏳ While checking auth
   if (loading) {
     return <div className="h-screen flex items-center justify-center">
-      Checking session...
+      <ClipLoader size={45} color="#f97316" />
     </div>;
   }
   
