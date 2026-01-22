@@ -1,18 +1,29 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
-import { FaStore, FaMapMarkerAlt, FaImage } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
+import { FaStore, FaMapMarkerAlt, FaImage, FaArrowLeft } from "react-icons/fa";
+import apiInterceptor from "../api/apiInterceptor";
+import { setMyShopData } from "../redux/ownerSlice";
+import { useNavigate } from "react-router-dom";
+import { ClipLoader } from "react-spinners";
 
 function CreateEditShop() {
   const { myShopData } = useSelector((state) => state.owner);
+  const { city, state, currentAddress } = useSelector((state) => state.user);
+  const navigate =  useNavigate();
 
   const [formData, setFormData] = useState({
     name: myShopData?.data?.shop?.name || "",
-    city: myShopData?.data?.shop?.city || "",
-    state: myShopData?.data?.shop?.state || "",
-    address: myShopData?.data?.shop?.address || "",
-    image: null,
+    city: myShopData?.data?.shop?.city || city || "",
+    state: myShopData?.data?.shop?.state || state || "",
+    address: myShopData?.data?.shop?.address || currentAddress || "",
+    image: myShopData?.data?.shop?.image || undefined,
   });
+
+  const [loading, setLoading] = useState(false);
   
+
+  const [showImage, setShowImage] = useState("");
+  const dispatch = useDispatch();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -21,29 +32,93 @@ function CreateEditShop() {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-    setFormData({ ...formData, image: file });
-  }
+      setFormData({ ...formData, image: file });
+      setShowImage(URL.createObjectURL(file));
+    }
   };
+
+  // useEffect(() => {
+  //   if (myShopData?.data?.shop?.image) {
+  //     // if image is stored as object
+  //     if (typeof myShopData.data.shop.image === "string") {
+  //       setShowImage(myShopData.data.shop.image);
+        
+  //     } else {
+  //       setShowImage(myShopData.data.shop.image.url);
+  //     }
+  //   }
+  // }, [myShopData]);
+
+  const handleSubmit=async (e) => {
+    e.preventDefault();
+    setLoading(true)
+    try {
+      const form = new FormData();
+      form.append("name", formData.name);
+      form.append("city", formData.city);
+      form.append("state", formData.state);
+      form.append("address", formData.address);
+
+      // send image only if user selected a new one
+      if (formData.image instanceof File) {
+        form.append("image", formData.image);
+      }
+
+      const result = await apiInterceptor.post("/shop/create-edit", form, {  withCredentials: true, });
+      dispatch(setMyShopData(result.data));
+      setLoading(false);
+    } catch (error) {
+      console.error("Shop Handle Submit errro -", error)
+      dispatch(setMyShopData({ data: null }));
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0f0c29] via-[#302b63] to-[#24243e]">
+        <div className="flex flex-col items-center gap-4">
+          <ClipLoader size={45} color="#f97316" />
+        </div>
+      </div>
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-[#0f0c29] via-[#302b63] to-[#24243e]">
       {/* Glass Card */}
-      <div className="relative w-full max-w-2xl bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl p-8 border border-white/20">
-
+      <div className="relative mt-4 mb-4 w-full max-w-2xl bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl p-8 border border-white/20">
         {/* Glow */}
         <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-orange-500/20 to-pink-500/20 blur-xl -z-10"></div>
 
         {/* Header */}
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-12 h-12 flex items-center justify-center rounded-xl bg-gradient-to-r from-orange-500 to-pink-500 text-white">
+          {/* Back Button */}
+          
+            <button
+              type="button"
+              onClick={() => navigate("/")}
+              className="
+                absolute top-4 left-4
+                flex items-center gap-2
+                text-sm text-gray-300
+                hover:text-white 
+                transition
+              "
+            >
+              <FaArrowLeft />
+              Back
+            </button>
+          
+
+          <div className="w-12 h-12 mt-3 flex items-center justify-center rounded-xl bg-gradient-to-r from-orange-500 to-pink-500 text-white">
             <FaStore size={22} />
           </div>
           <div>
             <h2 className="text-2xl font-bold text-white">
-              {myShopData ? "Edit Shop Details" : "Create Your Shop"}
+              {myShopData?.data ? "Edit Shop Details" : "Create Your Shop"}
             </h2>
             <p className="text-sm text-gray-300">
-              {myShopData
+              {myShopData?.data
                 ? "Update your shop information"
                 : "Fill details to start receiving orders"}
             </p>
@@ -51,9 +126,9 @@ function CreateEditShop() {
         </div>
 
         {/* Form */}
-        <form className="space-y-5">
+        <form className="space-y-5" onSubmit={handleSubmit}>
           {/* Shop Name */}
-          
+
           <div>
             <label className="text-sm text-gray-300">Shop Name</label>
             <input
@@ -84,6 +159,23 @@ function CreateEditShop() {
               file:text-white
               hover:file:opacity-90"
             />
+            {showImage ? (
+              <div className="mt-3">
+                <img
+                  src={showImage}
+                  alt="Shop preview"
+                  className="
+                    w-full h-48 object-cover rounded-lg
+                    border border-white/20
+                    shadow-md
+                  "
+                />
+              </div>
+            ) : (
+              <div className="mt-3 md:hidden flex items-center justify-center h-48 rounded-lg border border-dashed border-white/30 text-gray-400 text-sm">
+                No image selected
+              </div>
+            )}
           </div>
 
           {/* City & State */}
@@ -130,11 +222,11 @@ function CreateEditShop() {
 
           {/* Submit Button */}
           <button
-            type="button"
+            type="submit"
             onClick={undefined}
             className="w-full py-3 rounded-lg bg-gradient-to-r from-orange-500 to-pink-500 text-white font-semibold tracking-wide shadow-lg hover:scale-[1.02] transition"
           >
-            {myShopData ? "Update Shop" : "Create Shop"}
+            {myShopData?.data ? "Update Shop" : "Create Shop"}
           </button>
         </form>
       </div>

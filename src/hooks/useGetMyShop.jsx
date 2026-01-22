@@ -10,14 +10,14 @@ function useGetMyShop() {
   useEffect(() => {
     if (calledRef.current) return; // ❌ block second call
     calledRef.current = true;
-
+    
     
     const fetchShop = async () => {
         try {
-            const result = await apiInterceptor.post("/shop/get-shop",{withCredentials: true});
+            const result = await apiInterceptor.post("/shop/get-shop",{ withCredentials: true });
             dispatch(setMyShopData(result.data));
         } catch (error) {
-          console.error("unable to fetch  getCurrent shop",error)
+          console.error("unable to fetch  getCurrent shop",error.message)
           dispatch(setMyShopData(null));   
         }
     }

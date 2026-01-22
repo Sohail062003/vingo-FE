@@ -5,6 +5,7 @@ import Loadable from '../utils/Loadable';
 const Home = Loadable( lazy (() => import('../pages/Home')));
 const About = Loadable( lazy (() => import('../pages/About')));
 const CreateEditShop = Loadable( lazy (() => import('../pages/CreateEditShop')));
+const AddItem = Loadable( lazy (() => import('../pages/AddItem')));
 
 const AuthRoutes = [
     {
@@ -18,6 +19,10 @@ const AuthRoutes = [
     {
         path: '/owner/create-shop',
         element: <CreateEditShop />
+    },
+    {
+        path: '/owner/add-food',
+        element: <AddItem />
     }
     
 ]

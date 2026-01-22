@@ -10,6 +10,7 @@ import {
   FaTimes,
   FaPlusCircle,
   FaClock,
+  FaEdit,
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -106,11 +107,11 @@ function Navbar() {
               {/* OWNER ACTIONS (DESKTOP) */}
               {userData && role === "owner" && (
                 <>
-                {myShopData && 
+                 {( myShopData?.data?.shop) &&
                   <Link
                     to="/owner/add-food"
                     className="
-                      hidden lg:flex items-center gap-2
+                      sm:hidden md:flex lg:flex items-center gap-2
                       px-4 py-2 rounded-xl
                       bg-gradient-to-r from-orange-500 to-pink-500
                       text-white text-sm font-medium
@@ -119,12 +120,13 @@ function Navbar() {
                   >
                     <FaPlusCircle />
                     Add Food
-                  </Link> }
+                  </Link> 
+                  }
 
                   <Link
                     to="/owner/orders"
                     className="
-                      hidden relative lg:flex items-center gap-2
+                      sm:hidden  md:flex relative lg:flex items-center gap-2
                       text-sm text-gray-300
                       px-4 py-2 rounded-xl
                       border-orange-400 border 
@@ -188,6 +190,17 @@ function Navbar() {
                         <FaClipboardList />
                         My Orders
                       </Link>
+
+                      {/* owner shop data*/} 
+                      {(myShopData?.data?.shop) &&
+                        <Link
+                        to="/owner/create-shop"
+                        className="flex items-center gap-2 px-4 py-3 text-sm text-orange-400 hover:bg-white/10"
+                      >
+                         <FaEdit size={14} />
+                        Edit Shop
+                      </Link>
+                      }
                       <button
                         onClick={handleLogout}
                         className="w-full flex items-center gap-2 px-4 py-3 text-sm text-red-400 hover:bg-white/10"
@@ -359,6 +372,24 @@ function Navbar() {
                 >
                   0
                 </span>
+              </Link>
+              {/* ⏳ Pending Orders */}
+              <Link
+                to="/owner/create-shop"
+                onClick={() => setOpenMobileMenu(false)}
+                className="
+                  relative flex items-center gap-3
+                  w-full px-4 py-3
+                  rounded-xl
+                  bg-white/5
+                  text-white/90 text-sm
+                  hover:bg-white/10 hover:text-orange-400
+                  transition
+                "
+              >
+                <FaEdit size={16} />
+                Edit Shop
+                
               </Link>
             </>
           )}
