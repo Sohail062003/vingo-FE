@@ -1,14 +1,35 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "./commons/Navbar";
 import { FaStoreAlt, FaPlusCircle } from "react-icons/fa";
+import apiInterceptor from "../api/apiInterceptor";
+import { setMyShopData } from "../redux/ownerSlice";
+import { useState } from "react";
 
 function OwnerDashboard() {
-  const { myShopData } = useSelector((state) => state.owner);
+  const { myShopData, loading } = useSelector((state) => state.owner);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+
+  const [deleteItemId, setDeleteItemId] = useState(null);
 
   const items = myShopData?.data?.shop?.items || [];
 
+  const handelDeleteItem = async (itemId) => {
+    try {
+      const result = await apiInterceptor.get(`/item/delete-item/${itemId}`, {
+        withCredentials: true,
+      });
+      dispatch(setMyShopData(result.data));
+    } catch (error) {
+      console.error("error", error);
+    }
+  };
+
+  if (loading) { 
+    return <div> loading </div>
+  }
 
   return (
     <>
@@ -133,12 +154,11 @@ function OwnerDashboard() {
                 </div>
 
                 <div className="mt-6 flex flex-col gap-3">
-                  <button className="w-full py-2 rounded-lg bg-gradient-to-r from-orange-500 to-pink-500 font-semibold hover:opacity-90 transition">
+                  <button
+                    onClick={() => navigate("/owner/create-shop")}
+                    className="w-full py-2 rounded-lg bg-gradient-to-r from-orange-500 to-pink-500 font-semibold hover:opacity-90 transition"
+                  >
                     Edit Store
-                  </button>
-
-                  <button className="w-full py-2 rounded-lg border border-white/30 hover:bg-white/10 transition">
-                    Add Items
                   </button>
                 </div>
               </div>
@@ -166,7 +186,6 @@ function OwnerDashboard() {
               </div>
             )}
 
-           
             {/* Menu Cards */}
             {items.length > 0 && (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -215,11 +234,19 @@ function OwnerDashboard() {
 
                       {/* Actions */}
                       <div className="mt-5 flex gap-3">
-                        <button className="flex-1 py-2 rounded-lg border border-white/20 text-sm text-white hover:bg-white/10 transition">
+                        <button
+                          onClick={() =>
+                            navigate(`/owner/edit-item/${item._id}`)
+                          }
+                          className="flex-1 py-2 rounded-lg border border-white/20 text-sm text-white hover:bg-white/10 transition"
+                        >
                           Edit
                         </button>
 
-                        <button className="flex-1 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-sm text-white transition">
+                        <button
+                          onClick={() => setDeleteItemId(item._id)}
+                          className="flex-1 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-sm text-white transition"
+                        >
                           Delete
                         </button>
                       </div>
@@ -230,6 +257,41 @@ function OwnerDashboard() {
             )}
           </div>
         </>
+      )}
+
+      {deleteItemId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+          <div className="bg-[#1f1f2e] rounded-2xl p-6 w-[90%] max-w-md border border-white/10 shadow-2xl">
+            <h3 className="text-xl font-semibold text-white mb-2">
+              Delete Item
+            </h3>
+
+            <p className="text-sm text-gray-300 mb-6">
+              Are you sure you want to delete this item?
+              <br />
+              This action cannot be undone.
+            </p>
+
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setDeleteItemId(null)}
+                className="px-4 py-2 rounded-lg border border-white/20 text-white hover:bg-white/10 transition"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={() => {
+                  handelDeleteItem(deleteItemId);
+                  setDeleteItemId(null);
+                }}
+                className="px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white transition"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </>
   );

@@ -265,7 +265,7 @@ function Navbar() {
                     {role === "owner" ? "Shop owner" : "view profile"}
                   </p>
                   <div className="flex lg:flex items-center gap-1 text-gray-300">
-                    <FaMapMarkerAlt size={9} className="text-orange-400" />
+                    <FaMapMarkerAlt size={8} className="text-orange-400" />
                     <span className="text-xs">{city}</span>
                   </div>
                 </div>
