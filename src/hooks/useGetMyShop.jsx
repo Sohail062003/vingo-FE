@@ -1,12 +1,14 @@
 import React, { useEffect, useRef} from 'react'
 import apiInterceptor from "../api/apiInterceptor";
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setMyShopData } from '../redux/ownerSlice';
 
 function useGetMyShop() {
 
   const dispatch = useDispatch()
   const calledRef = useRef(false);
+  const {userData} = useSelector(state=>state.user);
+
   useEffect(() => {
     if (calledRef.current) return; // ❌ block second call
     calledRef.current = true;
@@ -17,12 +19,12 @@ function useGetMyShop() {
             dispatch(setMyShopData(result.data));
         } catch (error) {
           console.error("unable to fetch  getCurrent shop",error.message)
-          dispatch(setMyShopData(null));   
+          // dispatch(setMyShopData(null));   
         }
     }
 
     fetchShop();
-  }, [dispatch])
+  }, [dispatch, userData]);
 }
 
 export default useGetMyShop;

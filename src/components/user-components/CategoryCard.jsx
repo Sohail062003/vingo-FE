@@ -1,6 +1,6 @@
 import React from "react";
 
-function CategoryCard({ data }) {
+function CategoryCard({ name, image }) {
   return (
     <div
       className="
@@ -25,15 +25,15 @@ function CategoryCard({ data }) {
       {/* Image */}
       <div className="w-full h-[90px] sm:h-[110px] md:h-[120px] rounded-xl overflow-hidden mb-3">
         <img
-          src={data.image}
-          alt={data.name}
+          src={image}
+          alt={name}
           className="w-full h-full object-cover"
         />
       </div>
 
       {/* Title */}
       <h3 className="text-center font-medium text-white text-xs sm:text-sm md:text-base truncate">
-        {data.category}
+        {name}
       </h3>
     </div>
   );

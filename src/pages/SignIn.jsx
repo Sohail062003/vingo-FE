@@ -108,7 +108,7 @@ function SignIn() {
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
-                placeholder="Create password"
+                placeholder="Enter your Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full mt-1 p-3 pr-12 rounded-lg bg-black/30 text-white border border-white/20 focus:ring-2 focus:ring-orange-400 outline-none"

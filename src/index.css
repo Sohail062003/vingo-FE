@@ -12,3 +12,9 @@
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
 }
+
+.slider-btn {
+  @apply w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 
+  backdrop-blur border border-white/20 flex items-center justify-center 
+  transition;
+}
