@@ -11,7 +11,7 @@ function FoodCard({ data }) {
         className={i < rating ? "text-yellow-400" : "text-gray-400"}
       />
     ));
-
+    // Renders 5 stars, filled based on the rating
   return (
     <div className="
       bg-white/10 backdrop-blur-xl
