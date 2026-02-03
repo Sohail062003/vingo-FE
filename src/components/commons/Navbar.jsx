@@ -18,7 +18,7 @@ import { setUserData } from "../../redux/userSlice";
 import apiInterceptor from "../../api/apiInterceptor";
 
 function Navbar() {
-  const { userData, city } = useSelector((state) => state.user);
+  const { userData, city, cartItems } = useSelector((state) => state.user);
   const { myShopData }= useSelector((state) => state.owner);
   const dispatch = useDispatch();
 
@@ -99,7 +99,7 @@ function Navbar() {
                 >
                   <FaShoppingCart size={20} />
                   <span className="absolute -top-1 -right-1 bg-gradient-to-r from-orange-500 to-pink-500 text-xs w-4 h-4 flex items-center justify-center rounded-full">
-                    0
+                    {cartItems.length}
                   </span>
                 </Link>
               )}
@@ -318,7 +318,7 @@ function Navbar() {
               <FaShoppingCart />
               Cart
               <span className="absolute -top-1 left-2 bg-gradient-to-r from-orange-500 to-pink-500 text-xs w-4 h-4 flex items-center justify-center rounded-full">
-                0
+                {cartItems.length}
               </span>
             </Link>
           )}

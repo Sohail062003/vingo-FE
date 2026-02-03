@@ -14,7 +14,7 @@ function AuthLayout() {
     </div>;
   }
   
-  if (!userData) {
+  if (!userData?.data) {
 
     return <Navigate to="/signin"  />;
   }
