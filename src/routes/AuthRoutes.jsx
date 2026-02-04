@@ -8,6 +8,7 @@ const CreateEditShop = Loadable( lazy (() => import('../pages/CreateEditShop')))
 const AddItem = Loadable( lazy (() => import('../pages/AddItem')));
 const EditItem = Loadable( lazy (() => import('../pages/EditItem')));
 const CartPage = Loadable( lazy (() => import('../pages/CartPage')));
+const Checkout = Loadable( lazy (() => import('../pages/Checkout')));
 
 const AuthRoutes = [
     {
@@ -33,7 +34,12 @@ const AuthRoutes = [
     {
         path: '/cart',
         element: <CartPage />
+    },
+    {
+        path: '/checkout',
+        element: <Checkout />
     }
+
 
     
 ]

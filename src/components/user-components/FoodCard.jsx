@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 import { FaStar, FaMinus, FaPlus } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../../redux/userSlice";
+import { useNavigate } from "react-router-dom";
 
 function FoodCard({ data }) {
   const dispatch = useDispatch();
+  const navigate= useNavigate();
   const {cartItems} = useSelector(state => state.user);
 
   const isInCart = cartItems.some(item => item.id === data._id);
@@ -89,6 +91,7 @@ function FoodCard({ data }) {
         </div>
         {isInCart && (
     <button
+      onClick={()=> navigate('/cart')}
       className="w-full py-2 rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold hover:opacity-90 transition"
     >
       ORDER NOW
