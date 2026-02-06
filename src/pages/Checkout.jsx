@@ -14,14 +14,23 @@ import "leaflet/dist/leaflet.css";
 import { setAddress, setLocation } from "../redux/mapSlice";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import apiInterceptor from "../api/apiInterceptor";
+
 
 function RecenterMap({ location }) {
-  if (location.lat && location.lon) {
-    const map = useMap();
-    map.setView([location.lat, location.lon], 16, { animate: true });
-  }
+  const map = useMap(); // ✅ always called
+
+  useEffect(() => {
+    if (location?.lat && location?.lon) {
+      map.setView([location.lat, location.lon], 16, {
+        animate: true,
+      });
+    }
+  }, [location, map]);
+
   return null;
 }
+
 
 function Checkout() {
   const apiKey = import.meta.env.VITE_GEOAPIKEY;
@@ -73,6 +82,26 @@ function Checkout() {
       console.error("Error fetching lat/lng:", error);
     }
   };
+
+  // order api 
+  const handlePlaceOrder = async () => {
+    try {
+      const result = await apiInterceptor.post("/order/place-order",{
+        paymentMethod,
+        deliveryAddress: {
+          text: addressInput,
+          latitude: location?.lat,
+          longitude: location?.lon,
+        },
+        totalAmount,
+        cartItems
+
+      }, {withCredentials: true});
+      console.log(result);
+    } catch (error) {
+      console.error("Error placing order:", error);
+    }
+  }
 
   useEffect(() => {
     setAddressInput(address);
@@ -133,7 +162,7 @@ function Checkout() {
               {/* MAP PLACEHOLDER */}
               <div className="mt-5 h-56 sm:h-64 rounded-xl bg-black/30 border border-white/10 flex items-center justify-center text-gray-300">
                 <MapContainer
-                  zoom={213}
+                  zoom={16}
                   className={"w-full h-full"}
                   center={[location?.lat, location?.lon]}
                 >
@@ -284,7 +313,9 @@ function Checkout() {
             </div>
 
             {/* CTA BUTTON */}
-            <button className={`${paymentMethod === "cod" ? "bg-gradient-to-r from-green-500 to-emerald-600 shadow-[0_0_20px_rgba(34,197,94,0.35)] scale-[1.02]" : 
+            <button
+            onClick={handlePlaceOrder}
+            className={`${paymentMethod === "cod" ? "bg-gradient-to-r from-green-500 to-emerald-600 shadow-[0_0_20px_rgba(34,197,94,0.35)] scale-[1.02]" : 
               "bg-gradient-to-r from-blue-500 to-indigo-600 shadow-[0_0_20px_rgba(59,130,246,0.35)] scale-[1.02]"} 
               mt-6 w-full px-6 py-3 rounded-xl font-semibold hover:opacity-90 transition`}>
               {paymentMethod === "cod" ? "Place Cash on Delivery Order" : "Place Online Payment Order"}
