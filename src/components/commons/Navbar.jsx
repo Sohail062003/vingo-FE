@@ -83,7 +83,7 @@ function Navbar() {
               {/* My Orders (WEB ONLY) */}
               {userData && role == "user" && (
                 <Link
-                  to="/orders"
+                  to="/my-orders"
                   className="hidden lg:flex items-center gap-2 text-sm text-gray-300 hover:text-orange-400"
                 >
                   <FaClipboardList />
@@ -299,7 +299,7 @@ function Navbar() {
           {/* user role My Orders */}
           {userData && role == "user" && (
             <Link
-              to="/orders"
+              to="/my-orders"
               onClick={() => setOpenMobileMenu(false)}
               className="flex items-center gap-3 text-white/90 hover:text-orange-400 transition"
             >
@@ -345,7 +345,7 @@ function Navbar() {
 
               {/* ⏳ Pending Orders */}
               <Link
-                to="/owner/orders"
+                to="/my-orders"
                 onClick={() => setOpenMobileMenu(false)}
                 className="
                   relative flex items-center gap-3
@@ -373,7 +373,7 @@ function Navbar() {
                   0
                 </span>
               </Link>
-              {/* ⏳ Pending Orders */}
+              {/* ⏳ edit  */}
               <Link
                 to="/owner/create-shop"
                 onClick={() => setOpenMobileMenu(false)}

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
@@ -19,6 +19,7 @@ function SignUp() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   // handle Register 
   const handleSignup = async () => {
@@ -38,12 +39,14 @@ function SignUp() {
       }
 
       dispatch(setUserData(response.data)); 
+      navigate("/");
 
       setError("");
       setFullName("");
       setEmail("");
       setPassword("");
       setMobile("");
+
     } catch (error) {
       console.error("Signup failed:", error);
       setError(
@@ -81,6 +84,7 @@ function SignUp() {
       }
 
       dispatch(setUserData(data));
+      navigate("/");
 
       setError("");
 

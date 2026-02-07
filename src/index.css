@@ -18,3 +18,7 @@
   backdrop-blur border border-white/20 flex items-center justify-center 
   transition;
 }
+
+html, body {
+  scroll-behavior: smooth;
+}

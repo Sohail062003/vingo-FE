@@ -98,6 +98,7 @@ function Checkout() {
 
       }, {withCredentials: true});
       console.log(result);
+      navigate("/order-placed");
     } catch (error) {
       console.error("Error placing order:", error);
     }

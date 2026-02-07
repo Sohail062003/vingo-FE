@@ -5,6 +5,7 @@ import useGetCity from "./hooks/useGetCity";
 import useGetMyShop from "./hooks/useGetMyShop";
 import useGetShopByCity from "./hooks/useGetShopByCity";
 import useGetItemByCity from "./hooks/useGetItemByCity";
+import useGetMyOrders from "./hooks/useGetMyOrders";
 
 function App() {
   useGetCurrentUser();
@@ -12,6 +13,7 @@ function App() {
   useGetMyShop();
   useGetShopByCity();
   useGetItemByCity();
+  useGetMyOrders();
   return (
     <RouterProvider router={router} />
   )

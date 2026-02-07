@@ -13,7 +13,7 @@ function useGetItemByCity() {
         try {
             const result = await apiInterceptor.get(`/item/get-by-city/${city}`,{withCredentials: true});
             dispatch(setItemsInMyCity(result.data));
-            console.log("items by city",result.data)
+            // console.log("items by city",result.data)
         } catch (error) {
           console.error("unable to fetch  getCurrent user",error)
         }

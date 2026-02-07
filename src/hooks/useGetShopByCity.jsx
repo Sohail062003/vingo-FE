@@ -13,7 +13,7 @@ function useGetShopByCity() {
         try {
             const result = await apiInterceptor.get(`/shop/get-by-city/${city}`,{withCredentials: true});
             dispatch(setShopInMyCity(result.data));
-            console.log("shop by city",result.data)
+            // console.log("shop by city",result.data)
         } catch (error) {
           console.error("unable to fetch  getCurrent user",error)
         }

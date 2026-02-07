@@ -1,4 +1,4 @@
-import React, { useEffect, useRef} from 'react'
+import React, { useEffect } from 'react'
 import apiInterceptor from "../api/apiInterceptor";
 import { useDispatch, useSelector } from 'react-redux';
 import { setMyShopData } from '../redux/ownerSlice';
@@ -6,12 +6,13 @@ import { setMyShopData } from '../redux/ownerSlice';
 function useGetMyShop() {
 
   const dispatch = useDispatch()
-  const calledRef = useRef(false);
+  // const calledRef = useRef(false);
   const {userData} = useSelector(state=>state.user);
 
   useEffect(() => {
-    if (calledRef.current) return; // ❌ block second call
-    calledRef.current = true;
+    // if (calledRef.current) return; 
+     // ❌ block second call
+    // calledRef.current = true;
 
     const fetchShop = async () => {
         try {

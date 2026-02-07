@@ -67,8 +67,9 @@ function CreateEditShop() {
       const result = await apiInterceptor.post("/shop/create-edit", form, {  withCredentials: true, });
       dispatch(setMyShopData(result.data));
       setLoading(false);
+      navigate("/");
     } catch (error) {
-      console.error("Shop Handle Submit errro -", error)
+      console.error("Shop Handle Submit error -", error)
       dispatch(setMyShopData({ data: null }));
     } finally {
       setLoading(false);
