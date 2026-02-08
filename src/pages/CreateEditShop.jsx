@@ -19,10 +19,13 @@ function CreateEditShop() {
     image: myShopData?.data?.shop?.image || undefined,
   });
 
+
+  console.log("SHOP IMAGE:", myShopData?.data?.shop?.image);
+
   const [loading, setLoading] = useState(false);
   
 
-  const [showImage, setShowImage] = useState("");
+  const [showImage, setShowImage] = useState(formData.image ? (typeof formData.image === "string" ? formData.image : formData.image.url) : "");
   const dispatch = useDispatch();
 
   const handleChange = (e) => {
