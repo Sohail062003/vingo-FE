@@ -14,8 +14,7 @@ function useGetMyOrders() {
     const fetchOrders = async () => {
         try {
             const result = await apiInterceptor.get("/order/my-orders",{ withCredentials: true });
-            dispatch(setMyOrders(result.data));
-            console.log("fetched orders",result.data)
+            dispatch(setMyOrders(result?.data));
         } catch (error) {
           console.error("unable to fetch  my orders",error.message)
         }

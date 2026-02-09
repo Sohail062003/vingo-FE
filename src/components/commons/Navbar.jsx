@@ -124,7 +124,7 @@ function Navbar() {
                   }
 
                   <Link
-                    to="/owner/orders"
+                    to="/my-orders"
                     className="
                       sm:hidden  md:flex relative lg:flex items-center gap-2
                       text-sm text-gray-300
