@@ -7,6 +7,7 @@ function AuthLayout() {
   // useGetCurrentUser();
   const {userData, loading } = useSelector(state=>state.user);
   
+
   // ⏳ While checking auth
   if (loading) {
     return <div className="h-screen flex items-center justify-center">
@@ -14,7 +15,7 @@ function AuthLayout() {
     </div>;
   }
   
-  if (!userData?.data) {
+  if (!userData?.data?.user) {
 
     return <Navigate to="/signin"  />;
   }

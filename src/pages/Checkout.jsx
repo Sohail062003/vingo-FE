@@ -15,6 +15,7 @@ import { setAddress, setLocation } from "../redux/mapSlice";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import apiInterceptor from "../api/apiInterceptor";
+import { addMyOrder } from "../redux/userSlice";
 
 
 function RecenterMap({ location }) {
@@ -97,12 +98,15 @@ function Checkout() {
         cartItems
 
       }, {withCredentials: true});
-      console.log(result);
+      const order = result.data;
       navigate("/order-placed");
+      dispatch(addMyOrder(order));
+
     } catch (error) {
       console.error("Error placing order:", error);
     }
   }
+  console.log(addMyOrder);
 
   useEffect(() => {
     setAddressInput(address);
