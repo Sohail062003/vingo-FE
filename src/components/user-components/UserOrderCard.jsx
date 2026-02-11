@@ -16,7 +16,7 @@ function UserOrderCard({ data }) {
     });
   };
 
-  console.log(data);
+  // console.log(data);
 
   return (
     <div className="w-full mb-8 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl overflow-hidden">
