@@ -1,21 +1,20 @@
 import { Navigate, Outlet } from 'react-router-dom'
 import { useSelector } from 'react-redux';
 import { ClipLoader } from 'react-spinners';
-// import useGetCurrentUser from '../hooks/useGetCurrentUser'
 
 function AuthLayout() {
-  // useGetCurrentUser();
-  const {userData, loading } = useSelector(state=>state.user);
+  const {userData, authLoading } = useSelector(state=>state.user);
   
 
   // ⏳ While checking auth
-  if (loading) {
+  if (authLoading) {
     return <div className="h-screen flex items-center justify-center">
       <ClipLoader size={45} color="#f97316" />
     </div>;
   }
-  
-  if (!userData?.data?.user) {
+
+  const user = userData?.data?.user;
+  if (!user) {
 
     return <Navigate to="/signin"  />;
   }

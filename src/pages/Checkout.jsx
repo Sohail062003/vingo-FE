@@ -106,7 +106,7 @@ function Checkout() {
       console.error("Error placing order:", error);
     }
   }
-  console.log(addMyOrder);
+  // console.log(addMyOrder);
 
   useEffect(() => {
     setAddressInput(address);

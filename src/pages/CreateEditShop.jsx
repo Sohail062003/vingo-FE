@@ -20,7 +20,7 @@ function CreateEditShop() {
   });
 
 
-  console.log("SHOP IMAGE:", myShopData?.data?.shop?.image);
+  // console.log("SHOP IMAGE:", myShopData?.data?.shop?.image);
 
   const [loading, setLoading] = useState(false);
   

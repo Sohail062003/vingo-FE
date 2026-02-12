@@ -1,4 +1,6 @@
 import React from "react";
+import { useDispatch } from "react-redux"
+import apiInterceptor from "../../api/apiInterceptor.js"
 import {
   FaUser,
   FaEnvelope,
@@ -8,8 +10,12 @@ import {
   FaCalendarAlt,
   FaHashtag,
 } from "react-icons/fa";
+import { updateOrderStatus } from "../../redux/userSlice.js";
 
 function OwnerOrderCard({ data }) {
+
+  const dispatch = useDispatch();
+
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString("en-GB", {
@@ -19,7 +25,16 @@ function OwnerOrderCard({ data }) {
     });
   };
 
-  console.log("item", data);
+  const handleUpdateStatus = async (orderId, shopId, status ) => {
+    try {
+      const result = await apiInterceptor.post(`order/update-status/${orderId}/${shopId}`, {status}, {withCredentials: true});
+      dispatch(updateOrderStatus({orderId, shopId, status}))
+      console.log(result.data);
+    } catch (error) {
+      console.error("Error in fetching UpdateStus", error);
+    }
+  }
+ 
 
   return (
     <div className="w-full mb-8 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl overflow-hidden">
@@ -39,7 +54,7 @@ function OwnerOrderCard({ data }) {
         </div>
 
         <span className="px-3 py-1 rounded-full text-xs font-semibold bg-green-500/20 text-green-400 w-fit">
-          {data.shopOrders?.[0]?.status || "Pending"}
+          {data?.shopOrders?.status}
         </span>
       </div>
 
@@ -73,11 +88,11 @@ function OwnerOrderCard({ data }) {
 
           <div className="flex items-start gap-2 text-sm text-gray-300">
             <FaMapMarkerAlt className="text-orange-400 mt-1" />
-            <span>{data.deliveryAddress.text}</span>
+            <span>{data?.deliveryAddress?.text}</span>
           </div>
 
           <p className="text-xs text-gray-400">
-            Lat: {data.deliveryAddress.latitude} , Lon:{" "}
+            Lat: {data?.deliveryAddress?.latitude} , Lon:{" "}
             {data.deliveryAddress.longitude}
           </p>
 
@@ -137,10 +152,12 @@ function OwnerOrderCard({ data }) {
 
           {/* Status Selector (UI only) */}
           <select
+            onChange={(e) => handleUpdateStatus(data._id, data.shopOrders.shop._id, e.target.value)}
             className="mt-1 sm:mt-0 bg-black/40 text-white text-sm px-4 py-2 rounded-lg
             border border-white/20 focus:outline-none focus:ring-2 focus:ring-orange-500
             hover:border-orange-400 transition"
           >
+            <option value="">Change</option>
             <option value="pending">Pending</option>
             <option value="preparing">Preparing</option>
             <option value="out of delivery">Out for Delivery</option>
@@ -151,9 +168,9 @@ function OwnerOrderCard({ data }) {
         {/* ACTION BUTTON */}
         <button
           className="w-full sm:w-auto px-6 py-2.5 rounded-xl 
-    bg-gradient-to-r from-orange-500 to-pink-500 
-    text-white font-semibold 
-    hover:scale-[1.03] hover:shadow-lg transition"
+          bg-gradient-to-r from-orange-500 to-pink-500 
+          text-white font-semibold 
+          hover:scale-[1.03] hover:shadow-lg transition"
         >
           View Order Details
         </button>
