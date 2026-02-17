@@ -11,10 +11,12 @@ import {
   FaHashtag,
 } from "react-icons/fa";
 import { updateOrderStatus } from "../../redux/userSlice.js";
+import { useState } from "react";
 
 function OwnerOrderCard({ data }) {
 
   const dispatch = useDispatch();
+  const [availableBoys, setAvailableBoys] = useState([])
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -28,7 +30,8 @@ function OwnerOrderCard({ data }) {
   const handleUpdateStatus = async (orderId, shopId, status ) => {
     try {
       const result = await apiInterceptor.post(`order/update-status/${orderId}/${shopId}`, {status}, {withCredentials: true});
-      dispatch(updateOrderStatus({orderId, shopId, status}))
+      dispatch(updateOrderStatus({orderId, shopId, status}));
+      setAvailableBoys(result.data.availableBoys);
       console.log(result.data);
     } catch (error) {
       console.error("Error in fetching UpdateStus", error);

@@ -27,18 +27,18 @@
 // }
 
 // export default useGetCurrentUser
-import { useEffect,  } from "react";
+import { useEffect, useRef,  } from "react";
 import { useDispatch } from "react-redux";
 import apiInterceptor from "../api/apiInterceptor";
 import { setUserData } from "../redux/userSlice";
 
 function useGetCurrentUser() {
   const dispatch = useDispatch();
-  // const calledRef = useRef(false);
+  const calledRef = useRef(false);
 
   useEffect(() => {
-    // if (calledRef.current) return;
-    // calledRef.current = true;
+    if (calledRef.current) return;
+    calledRef.current = true;
 
     const fetchUser = async () => {
       try {
@@ -50,7 +50,7 @@ function useGetCurrentUser() {
         dispatch(setUserData(res.data));
       } catch (error) {
         console.error(error);
-        dispatch(setUserData(null));
+        //dispatch(setUserData(null));
       }
     };
 
