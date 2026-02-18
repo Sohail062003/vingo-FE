@@ -16,7 +16,7 @@ import { useState } from "react";
 function OwnerOrderCard({ data }) {
 
   const dispatch = useDispatch();
-  const [availableBoys, setAvailableBoys] = useState([])
+  const [availableBoys, setAvailableBoys] = useState([]);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
