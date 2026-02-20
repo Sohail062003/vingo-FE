@@ -1,6 +1,6 @@
 import React from "react";
-import { useDispatch } from "react-redux"
-import apiInterceptor from "../../api/apiInterceptor.js"
+import { useDispatch } from "react-redux";
+import apiInterceptor from "../../api/apiInterceptor.js";
 import {
   FaUser,
   FaEnvelope,
@@ -14,9 +14,8 @@ import { updateOrderStatus } from "../../redux/userSlice.js";
 import { useState } from "react";
 
 function OwnerOrderCard({ data }) {
-
   const dispatch = useDispatch();
-  const [availableBoys, setAvailableBoys] = useState([])
+  const [availableBoys, setAvailableBoys] = useState([]);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -27,17 +26,36 @@ function OwnerOrderCard({ data }) {
     });
   };
 
-  const handleUpdateStatus = async (orderId, shopId, status ) => {
+  const handleUpdateStatus = async (orderId, shopId, status) => {
     try {
-      const result = await apiInterceptor.post(`order/update-status/${orderId}/${shopId}`, {status}, {withCredentials: true});
-      dispatch(updateOrderStatus({orderId, shopId, status}));
+      const result = await apiInterceptor.post(
+        `order/update-status/${orderId}/${shopId}`,
+        { status },
+        { withCredentials: true },
+      );
+      dispatch(updateOrderStatus({ orderId, shopId, status }));
       setAvailableBoys(result.data.availableBoys);
       console.log(result.data);
     } catch (error) {
       console.error("Error in fetching UpdateStus", error);
     }
-  }
- 
+  };
+
+  const getStatusStyle = (status) => {
+    switch (status) {
+      case "pending":
+        return "bg-yellow-500/20 text-yellow-400 border border-yellow-500/30";
+
+      case "preparing":
+        return "bg-blue-500/20 text-blue-400 border border-blue-500/30";
+
+      case "out of delivery":
+        return "bg-orange-500/20 text-orange-400 border border-orange-500/30";
+
+      default:
+        return "bg-green-500/20 text-green-400 border border-green-500/30";
+    }
+  };
 
   return (
     <div className="w-full mb-8 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl overflow-hidden">
@@ -56,7 +74,10 @@ function OwnerOrderCard({ data }) {
           </div>
         </div>
 
-        <span className="px-3 py-1 rounded-full text-xs font-semibold bg-green-500/20 text-green-400 w-fit">
+        <span
+          className={`px-3 py-1 rounded-full text-xs font-semibold w-fit 
+          ${getStatusStyle(data?.shopOrders?.status)}`}
+        >
           {data?.shopOrders?.status}
         </span>
       </div>
@@ -155,7 +176,13 @@ function OwnerOrderCard({ data }) {
 
           {/* Status Selector (UI only) */}
           <select
-            onChange={(e) => handleUpdateStatus(data._id, data.shopOrders.shop._id, e.target.value)}
+            onChange={(e) =>
+              handleUpdateStatus(
+                data._id,
+                data.shopOrders.shop._id,
+                e.target.value,
+              )
+            }
             className="mt-1 sm:mt-0 bg-black/40 text-white text-sm px-4 py-2 rounded-lg
             border border-white/20 focus:outline-none focus:ring-2 focus:ring-orange-500
             hover:border-orange-400 transition"
@@ -164,7 +191,6 @@ function OwnerOrderCard({ data }) {
             <option value="pending">Pending</option>
             <option value="preparing">Preparing</option>
             <option value="out of delivery">Out for Delivery</option>
-            
           </select>
         </div>
 
@@ -178,6 +204,42 @@ function OwnerOrderCard({ data }) {
           View Order Details
         </button>
       </div>
+
+      {data.shopOrders.status === "out of delivery" && (
+        <div className="w-full mt-4 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-lg p-4">
+          <h3 className="text-white font-semibold mb-3 flex items-center gap-2">
+            Available Delivery Partners
+          </h3>
+          {availableBoys.length > 0 ? (
+            <div className="space-y-3">
+              {availableBoys.map((b, index) => (
+                <div
+                  key={index}
+                  className="flex justify-between items-center bg-black/40 border border-white/10 
+            rounded-xl p-3 hover:bg-black/60 transition"
+                >
+                  <div>
+                    <p className="text-white font-medium">{b.fullName}</p>
+                    <p className="text-xs text-gray-400">{b.mobile}</p>
+                  </div>
+
+                  <button
+                    className="px-4 py-1.5 text-xs rounded-lg 
+              bg-gradient-to-r from-orange-500 to-pink-500 
+              text-white font-semibold hover:scale-105 transition"
+                  >
+                    Assign
+                  </button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-sm text-gray-400 italic bg-black/30 p-3 rounded-lg border border-white/10">
+              Waiting for delivery partner to accept the order...
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

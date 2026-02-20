@@ -3,11 +3,11 @@ import { useSelector } from 'react-redux';
 import { ClipLoader } from 'react-spinners';
 
 function AuthLayout() {
-  const {userData, authLoading } = useSelector(state=>state.user);
+  const {userData, AuthLoading } = useSelector(state=>state.user);
   // modify or otimised the code
   // 
   // ⏳ While checking auth
-  if (authLoading) {
+  if (AuthLoading) {
     return <div className="h-screen flex items-center justify-center">
       <ClipLoader size={45} color="#f97316" />
     </div>;

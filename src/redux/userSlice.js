@@ -17,7 +17,15 @@ const userSlice = createSlice({
   },
   reducers: {
     setUserData: (state, action) => {
-      state.userData = action.payload;
+      // state.userData = action.payload;
+
+      // state.AuthLoading = false;
+      const userData = action.payload;
+      // strip password just in case backend ever sends it
+      if (userData?.data?.user?.password) {
+        delete userData.data.user.password;
+      }
+      state.userData = userData;
       state.AuthLoading = false;
     },
     setCity: (state, action) => {
@@ -86,15 +94,10 @@ const userSlice = createSlice({
       const order = state.myOrders.data.orders.find((o) => o._id == orderId);
       if (order) {
         if (order.shopOrders && order.shopOrders.shop._id == shopId) {
-            order.shopOrders.status=status;
+          order.shopOrders.status = status;
         }
       }
     },
-   
-
-
-
-
   },
 });
 
