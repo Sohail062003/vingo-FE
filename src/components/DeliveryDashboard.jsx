@@ -21,6 +21,16 @@ function DeliveryDashboard() {
     getAssignment();
   }, [userData])
 
+  const acceptOrder=async (assignmentId) => {
+    try {
+       const result = await apiInterceptor.post(`/order/accept-order/${assignmentId}`, {withCredentials: true});
+       console.log(result.data);
+      
+    } catch (error) {
+      console.error("error", error);
+    }
+  }
+
   return (
     <>
   <Navbar />
@@ -95,6 +105,7 @@ function DeliveryDashboard() {
 
               {/* Button */}
               <button
+                onClick={()=>acceptOrder(a.assignmentId)}
                 className="mt-6 w-full py-2.5 rounded-xl 
                 bg-gradient-to-r from-orange-500 to-pink-500 
                 text-white font-semibold 

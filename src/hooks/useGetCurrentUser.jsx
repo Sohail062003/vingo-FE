@@ -30,7 +30,7 @@
 import { useEffect, useRef,  } from "react";
 import { useDispatch } from "react-redux";
 import apiInterceptor from "../api/apiInterceptor";
-import { setUserData } from "../redux/userSlice";
+import { setUserData, setAuthLoading } from "../redux/userSlice";
 
 function useGetCurrentUser() {
   const dispatch = useDispatch();
@@ -50,7 +50,14 @@ function useGetCurrentUser() {
         dispatch(setUserData(res.data));
       } catch (error) {
         console.error(error);
-        //dispatch(setUserData(null));
+        
+         if (error?.response?.status === 401) {
+      dispatch(setUserData(null));
+    } else {
+      // network issue — just stop the loader without clearing user
+      dispatch(setAuthLoading(false));
+    }
+
       }
     };
 

@@ -13,21 +13,36 @@ const userSlice = createSlice({
     cartItems: [],
     totalAmount: 0,
     myOrders: [],
+    loginTime: null,
     loading: true,
   },
   reducers: {
     setUserData: (state, action) => {
       // state.userData = action.payload;
-
       // state.AuthLoading = false;
+
       const userData = action.payload;
-      // strip password just in case backend ever sends it
+
+      // ✅ handle logout / session expiry
+      if (userData === null) {
+        state.userData = null;
+        state.AuthLoading = false;
+        state.loginTime = null; // clear it properly
+        return;
+      }
+
+      // ✅ handle normal login
       if (userData?.data?.user?.password) {
         delete userData.data.user.password;
       }
       state.userData = userData;
       state.AuthLoading = false;
+      state.loginTime = Date.now();
     },
+
+    setAuthLoading: (state, action) => {
+  state.AuthLoading = action.payload;
+},
     setCity: (state, action) => {
       state.city = action.payload;
       state.loading = false;
@@ -114,5 +129,6 @@ export const {
   setMyOrders,
   addMyOrder,
   updateOrderStatus,
+  setAuthLoading,
 } = userSlice.actions;
 export default userSlice.reducer;
