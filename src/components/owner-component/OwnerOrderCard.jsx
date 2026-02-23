@@ -57,6 +57,8 @@ function OwnerOrderCard({ data }) {
     }
   };
 
+  console.log(data)
+
   return (
     <div className="w-full mb-8 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl overflow-hidden">
       {/* ================= HEADER ================= */}
@@ -205,11 +207,14 @@ function OwnerOrderCard({ data }) {
         </button>
       </div>
 
-      {data.shopOrders.status === "out of delivery" && (
+      {data?.shopOrders?.status === "out of delivery" && (
         <div className="w-full mt-4 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-lg p-4">
-          <h3 className="text-white font-semibold mb-3 flex items-center gap-2">
+          
+          {data?.shopOrders?.assignedDeliveryBoy ? <h3 className="text-white font-semibold mb-3 flex items-center gap-2">
+            Assigned Delivery Partners
+          </h3> : <h3 className="text-white font-semibold mb-3 flex items-center gap-2">
             Available Delivery Partners
-          </h3>
+          </h3> }
           {availableBoys.length > 0 ? (
             <div className="space-y-3">
               {availableBoys.map((b, index) => (
@@ -223,21 +228,21 @@ function OwnerOrderCard({ data }) {
                     <p className="text-xs text-gray-400">{b.mobile}</p>
                   </div>
 
-                  <button
+                  {/* <button
                     className="px-4 py-1.5 text-xs rounded-lg 
               bg-gradient-to-r from-orange-500 to-pink-500 
               text-white font-semibold hover:scale-105 transition"
                   >
                     Assign
-                  </button>
+                  </button> */}
                 </div>
               ))}
             </div>
-          ) : (
+          ) : data?.shopOrders?.assignedDeliveryBoy? <div>{data.shopOrders.assignedDeliveryBoy.fullName} - {data.shopOrders.assignedDeliveryBoy.mobile}</div> :
             <div className="text-sm text-gray-400 italic bg-black/30 p-3 rounded-lg border border-white/10">
               Waiting for delivery partner to accept the order...
             </div>
-          )}
+          }
         </div>
       )}
     </div>
