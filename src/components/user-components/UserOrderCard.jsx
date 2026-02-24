@@ -5,8 +5,12 @@ import {
   FaCalendarAlt,
   FaHashtag,
 } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 function UserOrderCard({ data }) {
+
+  const navigate = useNavigate();
+
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString("en-GB", {
@@ -106,7 +110,9 @@ function UserOrderCard({ data }) {
           {data?.totalAmount}
         </div>
 
-        <button className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-gradient-to-r from-orange-500 to-pink-500 text-white font-semibold hover:scale-[1.03] transition">
+        <button 
+         onClick={()=> navigate(`/track-order/${data._id}`)}
+         className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-gradient-to-r from-orange-500 to-pink-500 text-white font-semibold hover:scale-[1.03] transition">
           Track Order
         </button>
       </div>

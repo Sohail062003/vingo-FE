@@ -11,6 +11,8 @@ const CartPage = Loadable( lazy (() => import('../pages/CartPage')));
 const Checkout = Loadable( lazy (() => import('../pages/Checkout')));
 const OrderPlaced = Loadable( lazy (() => import('../pages/OrderPlaced')));
 const MyOrders = Loadable( lazy (() => import('../pages/MyOrders')));
+const TrackOrderPage = Loadable( lazy (() => import('../pages/TrackOrderPage')));
+
 
 const AuthRoutes = [
     {
@@ -48,6 +50,10 @@ const AuthRoutes = [
     {
         path: '/my-orders',
         element: <MyOrders />
+    },
+    {
+        path: '/track-order/:orderId',
+        element: <TrackOrderPage />
     }
 
 
