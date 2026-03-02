@@ -9,6 +9,7 @@ function DeliveryDashboard() {
   const [availableAssignments, setAvailableAssignments] = useState([]);
   const [currentOrder, setCurrentOrder] = useState(null);
   const [showOtpbox, setShowOtpBox] = useState(false);
+  const [otp, setOtp] = useState("");
   const user = userData?.data?.user;
 
   useEffect(() => {
@@ -54,11 +55,49 @@ function DeliveryDashboard() {
     }
   };
 
-  const handleSendOtp = () => {
-    setShowOtpBox(true);
+  const sendOtp = async () => {
+    try {
+      const result = await apiInterceptor.post(
+        '/order/send-delivery-otp',
+         { 
+          orderId: currentOrder?._id,
+          shopOrderId: currentOrder?.shopOrder?._id
+        },
+        { withCredentials: true },
+      );
+      setShowOtpBox(true);
+      console.log(result.data);
+      //  await getCurrentOrder();
+    } catch (error) {
+      console.error("error", error);
+    }
   };
 
-  console.log(currentOrder);
+
+  const verifyOtp = async () => {
+    try {
+      const result = await apiInterceptor.post(
+        '/order/verify-delivery-otp', 
+        { 
+          orderId: currentOrder?._id,
+          shopOrderId: currentOrder?.shopOrder?._id,
+          otp 
+        },
+        { withCredentials: true },
+      );
+      console.log(result.data);
+      //  await getCurrentOrder();
+    } catch (error) {
+      console.error("error", error);
+    }
+  };
+
+  // const handleSendOtp = () => {
+    
+  // };
+
+
+
 
   return (
     <>
@@ -124,7 +163,7 @@ function DeliveryDashboard() {
               </div>
               {!showOtpbox ? (
                 <button
-                  onClick={handleSendOtp}
+                  onClick={sendOtp}
                   className="mt-6 w-full py-3 rounded-xl 
                   bg-gradient-to-r from-green-500 to-emerald-500 
                   font-semibold tracking-wide
@@ -146,6 +185,7 @@ function DeliveryDashboard() {
                       type="text"
                       maxLength={6}
                       placeholder="Enter 6-digit OTP"
+                      onChange={(e)=>setOtp(e.target.value)}
                       className="flex-1 px-4 py-3 rounded-xl 
                       bg-white/10 border border-white/20 
                       text-white placeholder-gray-400 
@@ -154,6 +194,7 @@ function DeliveryDashboard() {
                       />
 
                     <button
+                      onClick={verifyOtp}
                       className="px-6 py-3 rounded-xl 
                       bg-gradient-to-r from-orange-500 to-pink-500 
                       font-semibold shadow-md 

@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Navbar from "./commons/Navbar";
 import { categories } from "../category";
 import CategoryCard from "./user-components/CategoryCard";
@@ -10,8 +10,12 @@ function UserDashboard() {
   const { city, shopInMyCity, itemsInMyCity } = useSelector(
     (state) => state.user,
   );
+
   const shops = shopInMyCity?.data?.shops || [];
   const items = itemsInMyCity?.data?.items || [];
+
+  const [updatedItemsList, setUpdatedItemsList] = useState(items);
+
 
   const categoryRef = useRef(null);
   const shopRef = useRef(null);
@@ -22,6 +26,20 @@ function UserDashboard() {
       behavior: "smooth",
     });
   };
+
+  
+  const handleFilterByCategory = (category) => {
+    if (category === "All") {
+      setUpdatedItemsList(items);
+    } else {
+      const filteredList = items?.filter((item) => item.category === category);
+      setUpdatedItemsList(filteredList);
+    }
+  };
+
+  useEffect(() => {
+    setUpdatedItemsList(items);
+  }, [items]);
 
   return (
     <>
@@ -62,7 +80,7 @@ function UserDashboard() {
           >
             {categories.map((cat, index) => (
               <div key={index} className="snap-start">
-                <CategoryCard name={cat.category} image={cat.image} />
+                <CategoryCard name={cat.category} image={cat.image} onClick={() => handleFilterByCategory(cat.category)} />
               </div>
             ))}
           </div>
@@ -140,7 +158,7 @@ function UserDashboard() {
               gap-6
             "
             >
-              {items.map((item, index) => (
+              {updatedItemsList.map((item, index) => (
                 <FoodCard key={index} data={item} />
               ))}
             </div>

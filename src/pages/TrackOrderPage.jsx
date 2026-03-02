@@ -127,7 +127,7 @@ function TrackOrderPage() {
         )}
 
         {/* ================= MAP ================= */}
-        {shopOrders.assignedDeliveryBoy && (
+        {shopOrders.assignedDeliveryBoy && shopOrders?.status !== "delivered" && (
           <div className="rounded-2xl overflow-hidden border border-white/20 shadow-xl">
             <DeliveryBoyTracking
               data={{

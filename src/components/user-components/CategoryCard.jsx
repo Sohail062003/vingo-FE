@@ -1,8 +1,9 @@
 import React from "react";
 
-function CategoryCard({ name, image }) {
+function CategoryCard({ name, image, onClick }) {
   return (
     <div
+     onClick={onClick}
       className="
         flex-shrink-0
         w-[130px]
@@ -23,7 +24,8 @@ function CategoryCard({ name, image }) {
       "
     >
       {/* Image */}
-      <div className="w-full h-[90px] sm:h-[110px] md:h-[120px] rounded-xl overflow-hidden mb-3">
+      <div 
+      className="w-full h-[90px] sm:h-[110px] md:h-[120px] rounded-xl overflow-hidden mb-3">
         <img
           src={image}
           alt={name}
