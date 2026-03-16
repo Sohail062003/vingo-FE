@@ -16,10 +16,6 @@ function UserDashboard() {
 
   const [updatedItemsList, setUpdatedItemsList] = useState(items);
 
-  
-  
-  
-  
 
   const categoryRef = useRef(null);
   const shopRef = useRef(null);
